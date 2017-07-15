@@ -2,34 +2,39 @@ package com.example.yangzikang.recyclerviewdemo.adapter;
 
 import android.content.Context;
 import android.content.Intent;
+import android.support.design.widget.Snackbar;
 import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.Button;
 import android.widget.ImageView;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import com.example.yangzikang.recyclerviewdemo.R;
 
 import java.util.ArrayList;
 import java.util.List;
 
-import static android.R.attr.textColorTertiary;
-import static java.lang.System.in;
 
 
 public class MyRecyclerAdapter extends RecyclerView.Adapter<MyRecyclerAdapter.ATViewHolder> {
 
     private List<String>  texts;
     private Context mContext;
+    private Button clear;
 
     List<Integer> selection;
+    List<View> viewList;
     boolean isSelect = false;
 
-    public MyRecyclerAdapter(List texts, Context context){
+    public MyRecyclerAdapter(List texts,Button clear, Context context){
         this.texts = texts;
         this.mContext = context;
+        this.clear = clear;
         selection = new ArrayList<>();
+        viewList = new ArrayList<>();
     }
     @Override
     public MyRecyclerAdapter.ATViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {
@@ -51,13 +56,18 @@ public class MyRecyclerAdapter extends RecyclerView.Adapter<MyRecyclerAdapter.AT
 
 
     public void clearSelectedState(){
+        for(View v :viewList){
+            TextView t = (TextView)v.findViewById(R.id.recycler_text);
+            t.setBackgroundResource(R.color.colorWhite);
+        }
         selection.clear();
-
+        viewList.clear();
     }
 
 
     class ATViewHolder extends RecyclerView.ViewHolder{
         TextView text;
+
 
         public ATViewHolder(final View itemView) {
             super(itemView);
@@ -65,22 +75,30 @@ public class MyRecyclerAdapter extends RecyclerView.Adapter<MyRecyclerAdapter.AT
             itemView.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View v) {
-                    int i = 0;
+                    boolean flag = true;
                     if(isSelect){
-                        for(i = 0;i<selection.size();i++){
+                        for(int i = 0;i<selection.size();i++){
                             if(selection.get(i)==getPosition()){
                                 text.setBackgroundResource(R.color.colorWhite);
+                                selection.remove(i);
+                                viewList.remove(i);
+                                flag = false;
                                 break;
                             }
                         }
 
-                        if(i == selection.size()){
+                        if(flag){
                             text.setBackgroundResource(R.color.colorAccent);
+                            selection.add(getPosition());
+                            viewList.add(itemView);
                         }
+
                     }
 
                 }
             });
+
+
             itemView.setOnLongClickListener(new View.OnLongClickListener() {
                 @Override
                 public boolean onLongClick(View v) {
@@ -88,6 +106,11 @@ public class MyRecyclerAdapter extends RecyclerView.Adapter<MyRecyclerAdapter.AT
                     text.setBackgroundResource(R.color.colorAccent);
                     int position = getPosition();
                     selection.add(position);
+                    viewList.add(itemView);
+
+
+                    clear.setVisibility(View.VISIBLE);
+
                     return isSelect;
                 }
             });
