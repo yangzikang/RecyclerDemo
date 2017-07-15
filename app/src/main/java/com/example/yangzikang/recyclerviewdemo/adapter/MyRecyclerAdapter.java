@@ -62,6 +62,7 @@ public class MyRecyclerAdapter extends RecyclerView.Adapter<MyRecyclerAdapter.AT
         }
         selection.clear();
         viewList.clear();
+        isSelect = false;
     }
 
 
@@ -87,6 +88,10 @@ public class MyRecyclerAdapter extends RecyclerView.Adapter<MyRecyclerAdapter.AT
                             }
                         }
 
+                        if(selection.size()==0){
+                            clear.setVisibility(View.INVISIBLE);
+                            isSelect = false;
+                        }
                         if(flag){
                             text.setBackgroundResource(R.color.colorAccent);
                             selection.add(getPosition());
